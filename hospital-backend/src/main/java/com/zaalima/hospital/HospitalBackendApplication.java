@@ -2,13 +2,12 @@ package com.zaalima.hospital;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 
-@SpringBootApplication(
-    exclude = {
-        org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration.class
-    }
-)
+@SpringBootApplication
+@EnableTransactionManagement
+
 public class HospitalBackendApplication {
 
 	public static void main(String[] args) {

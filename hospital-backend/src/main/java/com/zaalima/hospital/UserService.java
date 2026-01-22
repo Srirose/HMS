@@ -18,20 +18,21 @@ public class UserService {
     }
 
     public void createUser(String username, String rawPassword, String role) {
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(passwordEncoder.encode(rawPassword));
-        user.setRole(role);
+        User u = new User();
+        u.setUsername(username);
+        u.setPassword(passwordEncoder.encode(rawPassword));
+        u.setRole(role);
 
-        userRepository.save(user); 
+        userRepository.save(u); 
+        userRepository.flush();
         System.out.println(" userRepository.save() executed");
     }
 
     public User authenticate(String username, String password) {
-        User user = userRepository.findByUsername(username)
+        User u = userRepository.findByUsername(username)
                 .orElseThrow(()-> new RuntimeException("User not found"));
-                if(passwordEncoder.matches(password,user.getPassword())){
-                    return user;
+                if(passwordEncoder.matches(password,u.getPassword())){
+                    return u;
                 }else{
                     throw new RuntimeException("Invalid credentials");
                 }

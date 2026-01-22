@@ -29,6 +29,7 @@ public class AuthController {
     public ResponseEntity<?> register(
             @RequestHeader("X-Tenant-ID") String tenant,
             @RequestBody RegisterRequest req) {
+        try{
         System.out.println("Register request for tenant = " + tenant);
 
         TenantContext.setTenant(tenant);
@@ -39,24 +40,30 @@ public class AuthController {
                 "ADMIN"
         );
 
-        return ResponseEntity.ok("User registered");
+        return ResponseEntity.ok("User registered");}
+        catch(Exception e){
+                System.out.println(e);
+                return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request,@RequestHeader("X-Tenant-ID") String tenant) {
+        TenantContext.setTenant(tenant);
 
         User user = userService.authenticate(
                 request.getUsername(),
                 request.getPassword()
         );
 
+        String role = user.getRole() != null ? String.valueOf(user.getRole()) : null;
         String token = JwtUtil.generateToken(
                 user.getUsername(),
-                user.getRole()
+                role
         );
 
         return ResponseEntity.ok(
-                new LoginResponse(token, user.getRole())
+                new LoginResponse(token, role)
         );
     }
 

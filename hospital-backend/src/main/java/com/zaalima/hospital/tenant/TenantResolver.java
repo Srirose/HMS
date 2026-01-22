@@ -7,15 +7,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class TenantResolver implements CurrentTenantIdentifierResolver {
 
-    @Override
+   @Override
     public String resolveCurrentTenantIdentifier() {
         String tenant = TenantContext.getTenant();
-         System.out.println("Hibernate Tenant = " + tenant);
-
+        // Agar tenant null hai (Startup ke time), to 'public' return karo
         if (tenant == null) {
-            throw new IllegalStateException("No tenant set in TenantContext");
+            return "public";
         }
-
         return tenant;
     }
 

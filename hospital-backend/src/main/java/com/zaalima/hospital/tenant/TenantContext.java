@@ -1,6 +1,7 @@
 package com.zaalima.hospital.tenant;
 
 public class TenantContext {
+
      private static final ThreadLocal<String> CURRENT_TENANT = new ThreadLocal<>();
 
     public static void setTenant(String tenant) {
