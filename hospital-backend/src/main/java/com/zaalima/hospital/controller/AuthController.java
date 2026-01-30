@@ -1,11 +1,7 @@
 package com.zaalima.hospital.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.zaalima.hospital.User;
 import com.zaalima.hospital.UserService;
@@ -20,51 +16,60 @@ import com.zaalima.hospital.tenant.TenantContext;
 public class AuthController {
 
     private final UserService userService;
+    private final JwtUtil jwtUtil;
 
-    public AuthController(UserService userService) {
+    public AuthController(UserService userService, JwtUtil jwtUtil) {
         this.userService = userService;
+        this.jwtUtil = jwtUtil;
     }
 
-   @PostMapping("/register")
+    // ================= REGISTER =================
+    @PostMapping("/register")
     public ResponseEntity<?> register(
             @RequestHeader("X-Tenant-ID") String tenant,
             @RequestBody RegisterRequest req) {
-        try{
-        System.out.println("Register request for tenant = " + tenant);
 
-        TenantContext.setTenant(tenant);
+        try {
+            TenantContext.setTenant(tenant);
 
-        userService.createUser(
-                req.getUsername(),
-                req.getPassword(),
-                "ADMIN"
-        );
+            userService.createUser(
+                    req.getUsername(),
+                    req.getPassword(),
+                    req.getRole()   
+            );
 
-        return ResponseEntity.ok("User registered");}
-        catch(Exception e){
-                System.out.println(e);
-                return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.ok("User registered successfully");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } finally {
+            TenantContext.clear(); 
         }
     }
 
+    // ================= LOGIN =================
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request,@RequestHeader("X-Tenant-ID") String tenant) {
-        TenantContext.setTenant(tenant);
+    public ResponseEntity<LoginResponse> login(
+            @RequestHeader("X-Tenant-ID") String tenant,
+            @RequestBody LoginRequest request) {
 
-        User user = userService.authenticate(
-                request.getUsername(),
-                request.getPassword()
-        );
+        try {
+            TenantContext.setTenant(tenant);
 
-        String role = user.getRole() != null ? String.valueOf(user.getRole()) : null;
-        String token = JwtUtil.generateToken(
-                user.getUsername(),
-                role
-        );
+            User user = userService.authenticate(
+                    request.getUsername(),
+                    request.getPassword()
+            );
 
-        return ResponseEntity.ok(
-                new LoginResponse(token, role)
-        );
+            String token = jwtUtil.generateToken(
+                    user.getUsername(),
+                    user.getRole()
+            );
+
+            return ResponseEntity.ok(
+                    new LoginResponse(token, user.getRole())
+            );
+        } finally {
+            TenantContext.clear(); 
+        }
     }
-
 }
