@@ -2,27 +2,38 @@ server:
   port: 8080
 
 spring:
+  application:
+    name: hospital-backend
+
   datasource:
     url: jdbc:postgresql://localhost:5432/hospital_mt
     username: postgres
-    password: 2005
+    password: 8791
     driver-class-name: org.postgresql.Driver
 
   jpa:
+    hibernate:
+      ddl-auto: update
     properties:
       hibernate:
-        multiTenancy: SCHEMA
-        tenant_identifier_resolver: com.zaalima.hospital.tenant.CurrentTenantIdentifierResolverImpl
-        multi_tenant_connection_provider: com.zaalima.hospital.tenant.SchemaMultiTenantConnectionProvider
-        ddl-auto: update
-        show-sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
-  
+    show-sql: true
+    open-in-view: false
+
+  mail:
+    host: smtp.example.com
+    port: 587
+    username: your-smtp-user
+    password: your-smtp-password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 logging:
   level:
     org.hibernate.SQL: DEBUG
     org.hibernate.orm.jdbc.bind: TRACE
-
-      
-
-        
