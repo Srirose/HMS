@@ -11,7 +11,7 @@ import java.sql.SQLException;
 @SuppressWarnings("rawtypes")
 @Component
 public class SchemaMultiTenantConnectionProvider
-        extends AbstractDataSourceBasedMultiTenantConnectionProviderImpl {
+        extends AbstractDataSourceBasedMultiTenantConnectionProviderImpl<Object> {
 
     @Autowired
     private DataSource dataSource;
@@ -21,24 +21,18 @@ public class SchemaMultiTenantConnectionProvider
         return dataSource;
     }
 
-    protected DataSource selectDataSource(String tenantIdentifier) {
-        return dataSource;
-    }
-
     public Connection getConnection(String tenantIdentifier) throws SQLException {
-        Connection connection = dataSource.getConnection();
-        connection.setSchema(tenantIdentifier);
+        final Connection connection = super.getConnection(tenantIdentifier);
+        if (tenantIdentifier != null && !tenantIdentifier.isBlank()) {
+            connection.setSchema(tenantIdentifier);
+        } else {
+            connection.setSchema("public"); // default schema
+        }
         return connection;
-    }
-
-    public void releaseConnection(String tenantIdentifier, Connection connection)
-            throws SQLException {
-        connection.setSchema("public");
-        connection.close();
     }
 
     @Override
     protected DataSource selectDataSource(Object tenantIdentifier) {
-       return dataSource;
+        return dataSource;
     }
 }

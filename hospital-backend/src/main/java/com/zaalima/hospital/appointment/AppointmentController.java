@@ -1,21 +1,23 @@
 package com.zaalima.hospital.appointment;
 
 import com.zaalima.hospital.audit.LogAccess;
-import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/appointments")
-@RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
+
+    public AppointmentController(AppointmentService appointmentService) {
+        this.appointmentService = appointmentService;
+    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -26,12 +28,15 @@ public class AppointmentController {
 
     @GetMapping
     @LogAccess(entity = "Appointment", action = "VIEW")
-    public List<Appointment> listForDoctor(
-            @RequestParam Long doctorId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end
-    ) {
-        return appointmentService.findForDoctorWithinRange(doctorId, start, end);
+    public List<Appointment> listAll() {
+        return appointmentService.getAllAppointments();
+    }
+
+    @PutMapping("/{id}")
+    @LogAccess(entity = "Appointment", action = "UPDATE")
+    public Appointment update(@PathVariable Long id, @RequestBody Appointment appointment) {
+        appointment.setId(id);
+        return appointmentService.update(appointment);
     }
 
     @ExceptionHandler(IllegalStateException.class)

@@ -9,7 +9,7 @@ public class TenantResolver implements CurrentTenantIdentifierResolver {
 
    @Override
     public String resolveCurrentTenantIdentifier() {
-        String tenant = TenantContext.getTenant();
+        String tenant = TenantContext.getCurrentTenant();
         // Agar tenant null hai (Startup ke time), to 'public' return karo
         if (tenant == null) {
             return "public";

@@ -1,0 +1,47 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Admin Portal</a>
+    <div>
+      <a routerLink="/analytics-dashboard" class="btn btn-outline-light me-2">Analytics Dashboard</a>
+      <a routerLink="/audit-logs" class="btn btn-outline-light me-2">System Audit Logs</a>
+      <button class="btn btn-outline-light" (click)="logout()">Logout</button>
+    </div>
+  </div>
+</nav>
+<div class="container mt-4">
+  <h1>Welcome Admin</h1>
+  <p>This is the admin dashboard. You can manage users, doctors, and nurses here.</p>
+  <!-- Add Admin specific features here -->
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card text-white bg-primary mb-3">
+        <div class="card-header">Doctors</div>
+        <div class="card-body">
+          <h5 class="card-title">Manage Doctors</h5>
+          <p class="card-text">Add, remove or update doctor details.</p>
+          <a [routerLink]="['/staff-management', 'doctor']" class="btn btn-light text-primary fw-bold">Open List</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-white bg-success mb-3">
+        <div class="card-header">Nurses</div>
+        <div class="card-body">
+          <h5 class="card-title">Manage Nurses</h5>
+          <p class="card-text">Add, remove or update nurse details.</p>
+          <a [routerLink]="['/staff-management', 'nurse']" class="btn btn-light text-success fw-bold">Open List</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card text-white bg-warning mb-3">
+        <div class="card-header">Patients</div>
+        <div class="card-body">
+          <h5 class="card-title">View Patients</h5>
+          <p class="card-text">Overview of all patients.</p>
+          <a routerLink="/patients" class="btn btn-light text-warning fw-bold">Open Records</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

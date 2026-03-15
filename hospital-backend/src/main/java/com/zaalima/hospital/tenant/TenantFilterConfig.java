@@ -16,7 +16,7 @@ public class TenantFilterConfig {
                 new FilterRegistrationBean<>();
 
         registration.setFilter(tenantFilter);
-        registration.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        registration.setOrder(Ordered.HIGHEST_PRECEDENCE + 1);
         registration.addUrlPatterns("/*");
 
         return registration;

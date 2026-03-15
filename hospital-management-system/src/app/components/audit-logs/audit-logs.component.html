@@ -1,0 +1,57 @@
+<div class="container mt-4 mb-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>System Audit Logs</h2>
+    <button class="btn btn-secondary" routerLink="/dashboard">Back to Dashboard</button>
+  </div>
+
+  <div class="card mb-4 shadow-sm border-0">
+    <div class="card-body">
+      <div class="input-group">
+        <span class="input-group-text bg-white"><i class="bi bi-search"></i> Search Logs</span>
+        <input type="text" class="form-control border-start-0" 
+               placeholder="Search by User, Action, or Entity..." 
+               [(ngModel)]="searchTerm" (input)="applyFilter()">
+      </div>
+    </div>
+  </div>
+
+  <div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Timestamp</th>
+              <th>User</th>
+              <th>Role</th>
+              <th>Action</th>
+              <th>Entity</th>
+              <th>IP Address</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let log of filteredLogs">
+              <td class="small">{{ log.timestamp | date:'short' }}</td>
+              <td><span class="badge bg-info-subtle text-info">{{ log.userId }}</span></td>
+              <td class="small">{{ log.role }}</td>
+              <td>
+                <span class="badge rounded-pill" 
+                      [class.bg-success]="log.action.includes('CREATE')"
+                      [class.bg-warning]="log.action.includes('UPDATE')"
+                      [class.bg-danger]="log.action.includes('EXPORT')"
+                      [class.bg-primary]="log.action.includes('VIEW')">
+                  {{ log.action }}
+                </span>
+              </td>
+              <td>{{ log.entityName }}</td>
+              <td class="small text-muted">{{ log.ipAddress }}</td>
+            </tr>
+            <tr *ngIf="filteredLogs.length === 0">
+              <td colspan="6" class="text-center py-4">No audit logs found.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

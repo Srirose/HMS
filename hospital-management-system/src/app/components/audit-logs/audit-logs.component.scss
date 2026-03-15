@@ -1,0 +1,15 @@
+.badge-info-subtle {
+  background-color: #e0f7fa;
+  color: #00838f;
+}
+
+.table-hover tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.card {
+  transition: transform 0.2s;
+  &:hover {
+    transform: translateY(-2px);
+  }
+}

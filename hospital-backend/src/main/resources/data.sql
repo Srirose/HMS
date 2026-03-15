@@ -1,0 +1,2 @@
+INSERT INTO appointment (doctor_id, patient_id, start_time, end_time, status, notes) VALUES (1, 1, '2026-03-13 10:00:00', '2026-03-13 11:00:00', 'CONFIRMED', 'Regular checkup');
+INSERT INTO appointment (doctor_id, patient_id, start_time, end_time, status, notes) VALUES (1, 2, '2026-03-14 14:00:00', '2026-03-14 15:00:00', 'CONFIRMED', 'Follow-up');

@@ -9,9 +9,8 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,53 +19,19 @@ import java.util.Map;
 public class HibernateConfig {
 
     @Bean
-    public MultiTenantConnectionProvider<String> multiTenantConnectionProvider(DataSource dataSource) {
-        return new MultiTenantConnectionProvider<String>() {
-            
-            @Override
-            public Connection getAnyConnection() throws SQLException {
-                return dataSource.getConnection();
-            }
-
-            @Override
-            public void releaseAnyConnection(Connection connection) throws SQLException {
-                connection.close();
-            }
-
-            @Override
-            public Connection getConnection(String tenantIdentifier) throws SQLException {
-                Connection connection = getAnyConnection();
-                connection.setSchema(tenantIdentifier);
-                return connection;
-            }
-
-            @Override
-            public void releaseConnection(String tenantIdentifier, Connection connection) throws SQLException {
-                connection.setSchema("public");
-                releaseAnyConnection(connection);
-            }
-
-            @Override
-            public boolean supportsAggressiveRelease() {
-                return false;
-            }
-
-            @Override
-            public boolean isUnwrappableAs(Class<?> unwrapType) {
-                return false;
-            }
-
-            @Override
-            public <T> T unwrap(Class<T> unwrapType) {
-                return null;
-            }
-        };
+    public DataSource dataSource() {
+        return DataSourceBuilder.create()
+                .url("jdbc:postgresql://localhost:5432/hospital_mt")
+                .username("postgres")
+                .password("8791")
+                .driverClassName("org.postgresql.Driver")
+                .build();
     }
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(
             DataSource dataSource,
-            MultiTenantConnectionProvider<String> connectionProvider,
+            MultiTenantConnectionProvider<String> multiTenantConnectionProvider,
             CurrentTenantIdentifierResolver<String> tenantResolver) {
 
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
@@ -78,7 +43,7 @@ public class HibernateConfig {
 
         Map<String, Object> properties = new HashMap<>();
         properties.put("hibernate.multiTenancy", "SCHEMA");
-        properties.put("hibernate.multi_tenant_connection_provider", connectionProvider);
+        properties.put("hibernate.multi_tenant_connection_provider", multiTenantConnectionProvider);
         properties.put("hibernate.tenant_identifier_resolver", tenantResolver);
         properties.put("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
         properties.put("hibernate.hbm2ddl.auto", "update");

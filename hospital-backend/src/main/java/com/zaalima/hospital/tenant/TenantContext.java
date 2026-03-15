@@ -2,18 +2,18 @@ package com.zaalima.hospital.tenant;
 
 public class TenantContext {
 
-     private static final ThreadLocal<String> CURRENT_TENANT = new ThreadLocal<>();
+     private static final ThreadLocal<String> currentTenant = new ThreadLocal<>();
 
-    public static void setTenant(String tenant) {
-        CURRENT_TENANT.set(tenant);
+    public static void setCurrentTenant(String tenant) {
+        currentTenant.set(tenant);
     }
 
-    public static String getTenant() {
-        return CURRENT_TENANT.get();
+    public static String getCurrentTenant() {
+        return currentTenant.get();
     }
 
     public static void clear() {
-        CURRENT_TENANT.remove();
+        currentTenant.remove();
     }
     
 }

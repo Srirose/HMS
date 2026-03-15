@@ -1,0 +1,36 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Doctor Portal</a>
+    <div>
+      <a routerLink="/appointment-calendar" class="btn btn-outline-light me-2">Appointment Calendar</a>
+      <button class="btn btn-outline-light" (click)="logout()">Logout</button>
+    </div>
+  </div>
+</nav>
+<div class="container mt-4">
+  <h1>Welcome Doctor</h1>
+  <p>This is your dashboard. You can view appointments and patient records.</p>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card mb-3">
+        <div class="card-header">Appointments</div>
+        <div class="card-body">
+          <h5 class="card-title">Today's Appointments</h5>
+          <p class="card-text">Check your schedule for today.</p>
+          <a routerLink="/appointment-calendar" class="btn btn-primary">Book New Appointment</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card mb-3">
+        <div class="card-header">Patients</div>
+        <div class="card-body">
+          <h5 class="card-title">My Patients</h5>
+          <p class="card-text">Access patient medical records.</p>
+          <a routerLink="/admission" class="btn btn-success me-2">Admit New Patient</a>
+          <a routerLink="/patients" class="btn btn-primary">View Patients</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

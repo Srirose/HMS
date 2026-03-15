@@ -1,0 +1,38 @@
+<div class="container mt-4 mb-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Manage {{ role | titlecase }}s</h2>
+    <button class="btn btn-secondary" routerLink="/admin">Back to Admin</button>
+  </div>
+
+  <div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Role</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let staff of staffList">
+              <td>#{{ staff.id }}</td>
+              <td><strong>{{ staff.username }}</strong></td>
+              <td><span class="badge bg-info-subtle text-info">{{ staff.role }}</span></td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-outline-danger" (click)="deleteStaff(staff.id)">
+                  <i class="bi bi-trash"></i> Delete
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="staffList.length === 0">
+              <td colspan="4" class="text-center py-4">No {{ role }}s found.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

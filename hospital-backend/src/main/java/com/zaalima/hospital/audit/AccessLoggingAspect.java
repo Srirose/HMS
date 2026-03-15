@@ -34,7 +34,7 @@ public class AccessLoggingAspect {
         String roles = auth != null ? auth.getAuthorities().toString() : "";
 
         AccessLog log = new AccessLog();
-        log.setTenantId(TenantContext.getTenant());
+        log.setTenantId(TenantContext.getCurrentTenant());
         log.setUserId(username);
         log.setRole(roles);
         log.setEntityName(logAccess.entity());

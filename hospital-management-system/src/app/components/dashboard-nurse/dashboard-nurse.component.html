@@ -1,0 +1,44 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-info">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Nurse Portal</a>
+    <button class="btn btn-outline-light" (click)="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="container mt-4">
+  <h1>Welcome Nurse</h1>
+  <p>This is your dashboard.</p>
+
+  <!-- New Patient Admission Section -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Patient Management</h5>
+      <p class="card-text">Register new patient admissions here.</p>
+      <a routerLink="/admission" class="btn btn-success me-2">Admit New Patient</a>
+      <a routerLink="/patients" class="btn btn-info text-white">View Patients</a>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card mb-3">
+        <div class="card-header">Tasks</div>
+        <div class="card-body">
+          <h5 class="card-title">Pending Tasks</h5>
+          <p class="card-text">View your assigned tasks for the day.</p>
+          <a href="#" class="btn btn-info text-white">View Tasks</a>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card mb-3">
+        <div class="card-header">Vitals</div>
+        <div class="card-body">
+          <h5 class="card-title">Patient Vitals</h5>
+          <p class="card-text">Record and monitor patient vitals.</p>
+          <a href="#" class="btn btn-info text-white">Record Vitals</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

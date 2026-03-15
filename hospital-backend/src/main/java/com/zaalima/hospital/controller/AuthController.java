@@ -13,6 +13,7 @@ import com.zaalima.hospital.tenant.TenantContext;
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin(origins = "http://localhost:4200")
 public class AuthController {
 
     private final UserService userService;
@@ -30,7 +31,7 @@ public class AuthController {
             @RequestBody RegisterRequest req) {
 
         try {
-            TenantContext.setTenant(tenant);
+            TenantContext.setCurrentTenant(tenant);
 
             userService.createUser(
                     req.getUsername(),
@@ -48,12 +49,12 @@ public class AuthController {
 
     // ================= LOGIN =================
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(
+    public ResponseEntity<?> login(
             @RequestHeader("X-Tenant-ID") String tenant,
             @RequestBody LoginRequest request) {
 
         try {
-            TenantContext.setTenant(tenant);
+            TenantContext.setCurrentTenant(tenant);
 
             User user = userService.authenticate(
                     request.getUsername(),
@@ -68,6 +69,8 @@ public class AuthController {
             return ResponseEntity.ok(
                     new LoginResponse(token, user.getRole())
             );
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body(e.getMessage());
         } finally {
             TenantContext.clear(); 
         }

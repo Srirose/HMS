@@ -1,0 +1,145 @@
+<div class="container mt-4 mb-5">
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Loading medical history...</p>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger mb-4">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && patient" class="row">
+    <div class="col-12 mb-4">
+      <div class="d-flex justify-content-between align-items-center">
+        <h2>Patient Medical Record</h2>
+        <div class="btn-group shadow-sm">
+          <button class="btn btn-outline-secondary" routerLink="/patients">Back to List</button>
+          <button class="btn btn-primary" (click)="toggleExport()" [disabled]="loading || !patient">
+            <i class="bi bi-file-earmark-pdf"></i> Export Record
+          </button>
+        </div>
+      </div>
+      
+      <!-- Password Input for Export -->
+      <div *ngIf="showPasswordInput" class="card mt-3 border-primary shadow-sm">
+        <div class="card-body">
+          <div class="row align-items-center">
+            <div class="col-md-8">
+              <label class="form-label small text-muted">Set a password to encrypt the PDF</label>
+              <input type="password" class="form-control" [(ngModel)]="exportPassword" placeholder="Enter password...">
+            </div>
+            <div class="col-md-4 text-end mt-3 mt-md-0">
+              <button class="btn btn-success me-2" (click)="exportPdf()">Download</button>
+              <button class="btn btn-light" (click)="toggleExport()">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar: Personal Info -->
+    <div class="col-md-4 mb-4">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white py-3">
+          <h5 class="mb-0">Personal Profile</h5>
+        </div>
+        <div class="card-body p-0">
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+              <span class="text-muted small d-block">Full Name</span>
+              <strong>{{ patient.firstName }} {{ patient.lastName }}</strong>
+            </li>
+            <li class="list-group-item">
+              <span class="text-muted small d-block">Patient ID</span>
+              <strong>#{{ patient.id }}</strong>
+            </li>
+            <li class="list-group-item">
+              <span class="text-muted small d-block">Gender & DOB</span>
+              <strong>{{ patient.gender }} | {{ patient.dob | date }}</strong>
+            </li>
+            <li class="list-group-item">
+              <span class="text-muted small d-block">Contact & Email</span>
+              <strong>{{ patient.contactNumber }}</strong>
+              <div class="text-muted small">{{ patient.email || 'No email' }}</div>
+            </li>
+            <li class="list-group-item">
+              <span class="text-muted small d-block">Assigned Doctor</span>
+              <strong>{{ patient.assignedDoctorUsername || 'Unassigned' }}</strong>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content: JSONB Medical History & HL7/FHIR Data -->
+    <div class="col-md-8">
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-dark text-white py-3">
+          <h5 class="mb-0">HL7/FHIR Electronic Health Record (EHR)</h5>
+        </div>
+        <div class="card-body">
+          <ul class="nav nav-tabs mb-3" id="ehrTab" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab">Medical History</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="vitals-tab" data-bs-toggle="tab" data-bs-target="#vitals" type="button" role="tab">Current Vitals</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="raw-tab" data-bs-toggle="tab" data-bs-target="#raw" type="button" role="tab">Raw JSONB</button>
+            </li>
+          </ul>
+
+          <div class="tab-content border-start border-end border-bottom p-4 rounded-bottom" id="ehrTabContent">
+            <!-- Medical History Tab -->
+            <div class="tab-pane fade show active" id="history" role="tabpanel">
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <h6 class="border-bottom pb-2">Allergies</h6>
+                  <ul class="list-unstyled" *ngIf="patient.medicalHistory?.allergies?.length > 0">
+                    <li *ngFor="let allergy of patient.medicalHistory.allergies" class="mb-1">
+                      <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>{{ allergy }}
+                    </li>
+                  </ul>
+                  <p class="text-muted" *ngIf="!patient.medicalHistory?.allergies?.length">No known allergies.</p>
+                </div>
+                <div class="col-md-6">
+                  <h6 class="border-bottom pb-2">Active Medications</h6>
+                  <ul class="list-unstyled" *ngIf="patient.medicalHistory?.currentMedications?.length > 0">
+                    <li *ngFor="let med of patient.medicalHistory.currentMedications" class="mb-1">
+                      <i class="bi bi-capsule text-primary me-2"></i>{{ med }}
+                    </li>
+                  </ul>
+                  <p class="text-muted" *ngIf="!patient.medicalHistory?.currentMedications?.length">No active prescriptions.</p>
+                </div>
+                <div class="col-12 mt-4">
+                  <h6 class="border-bottom pb-2">Diagnosis & Notes</h6>
+                  <p class="mb-0">{{ patient.admissionDetails?.reasonForAdmission || 'No admission notes recorded.' }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Vitals Tab -->
+            <div class="tab-pane fade" id="vitals" role="tabpanel">
+              <div class="row g-3">
+                <div class="col-md-3" *ngFor="let vital of (patient.medicalHistory?.vitals | keyvalue)">
+                  <div class="p-3 border rounded text-center h-100 bg-light">
+                    <span class="text-muted small d-block">{{ $any(vital.key) | titlecase }}</span>
+                    <strong>{{ $any(vital.value) || 'N/A' }}</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Raw JSONB Tab -->
+            <div class="tab-pane fade" id="raw" role="tabpanel">
+              <pre class="bg-light p-3 rounded small overflow-auto" style="max-height: 400px;">{{ getJsonString(patient) }}</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

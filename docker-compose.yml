@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./hospital-backend
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/hospital_mt
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=8791
+
+  frontend:
+    build: ./hospital-management-system
+    ports:
+      - "4200:80"
+
+  db:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=8791
+      - POSTGRES_DB=hospital_mt
+    ports:
+      - "5432:5432"
